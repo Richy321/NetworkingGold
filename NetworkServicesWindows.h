@@ -1,33 +1,48 @@
 #pragma once
-#include "INetworkServices.h"
-#include <WinSock2.h>
-#include <Windows.h>
+#include "INetworkService.h"
+#include "NetworkServices.h"
+#include "WinSocket.h"
 
-class NetworkServicesWindows : INetworkServices
+#if PLATFORM == PLATFORM_WINDOWS 
+	#include <WinSock2.h>
+	#include <Windows.h>
+	#pragma comment( lib, "wsock32.lib" ) 
+#endif
+
+namespace networking
 {
-public:
-
-
-	virtual int sendMessage() = 0;
-	virtual int receiveMessage() = 0;
-
-
-	void Initialise()
+	class NetworkServicesWindows : public INetworkService
 	{
-		WSADATA wsaData;;
-	
-		if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0)
+	public:
+		#pragma region Construction/Destruction
+		NetworkServicesWindows()
 		{
-			//printf(stderr, "WSAStartup failed.\n");
+			assert(Initialise());
 		}
-	}
 
-	NetworkServicesWindows()
-	{
-	}
+		~NetworkServicesWindows()
+		{
+			CleanUp();
+		}
 
-	~NetworkServicesWindows()
-	{
-	}
-};
+		#pragma endregion
+
+		bool Initialise()
+		{
+			WSADATA wsaData;
+			return WSAStartup(MAKEWORD(2, 0), &wsaData) == NO_ERROR;
+		}
+
+		void CleanUp()
+		{
+			WSACleanup();
+		}
+
+		ISocket* CreateSocket(SocketType sockType)
+		{
+			return new WinSocket();
+		}
+
+	};
+}
 

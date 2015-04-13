@@ -8,10 +8,11 @@
 //
 
 #define OCTET_BULLET 1
+#define OCTET_ANTTWEAKBAR 1
 
 #include "../../octet.h"
-
-#include "networking.h"
+#include "PlatformDetection.h"
+#include "networkingApp.h"
 
 /// Create a box with octet
 int main(int argc, char **argv) {
@@ -19,7 +20,7 @@ int main(int argc, char **argv) {
   octet::app::init_all(argc, argv);
 
   // our application.
-  octet::networking app(argc, argv);
+  octet::networkingApp app(argc, argv);
   app.init();
 
   // open windows

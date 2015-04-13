@@ -84,6 +84,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PlatformDetection.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\containers\allocator.h" />
@@ -215,8 +216,14 @@
     <ClInclude Include="..\..\shaders\shader.h" />
     <ClInclude Include="..\..\shaders\shaders.h" />
     <ClInclude Include="..\..\shaders\texture_shader.h" />
-    <ClInclude Include="INetworkServices.h" />
-    <ClInclude Include="networking.h" />
+    <ClInclude Include="Address.h" />
+    <ClInclude Include="INetworkService.h" />
+    <ClInclude Include="NetworkServices.h" />
+    <ClInclude Include="ISocket.h" />
+    <ClInclude Include="networkingApp.h" />
+    <ClInclude Include="NetworkServicesUnix.h" />
+    <ClInclude Include="NetworkServicesWindows.h" />
+    <ClInclude Include="WinSocket.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl" />
