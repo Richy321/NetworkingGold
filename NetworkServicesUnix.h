@@ -25,6 +25,11 @@ namespace networking
 		{
 			//return new WinSocket();
 		}
+
+		IConnection* CreateConnection(const int protocolId, const float timeout)
+		{
+			return new Connection(protocolId, timeout, *this);
+		}
 	};
 }
 

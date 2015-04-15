@@ -13,18 +13,26 @@
 #include "../../octet.h"
 #include "PlatformDetection.h"
 #include "networkingApp.h"
+#include "ServerApp.h"
 
 /// Create a box with octet
-int main(int argc, char **argv) {
-  // set up the platform.
-  octet::app::init_all(argc, argv);
+int main(int argc, char **argv)
+{
+	// set up the platform.
+	octet::app::init_all(argc, argv);
 
-  // our application.
-  octet::networkingApp app(argc, argv);
-  app.init();
+	#if _IS_SERVER
+		//server application
+		octet::ServerApp serverApp(argc, argv);
+		serverApp.init();
+	#else
+		// client application.
+		octet::networkingApp clientApp(argc, argv);
+		clientApp.init();
+	#endif
 
-  // open windows
-  octet::app::run_all_apps();
+	// open windows
+	octet::app::run_all_apps();
 }
 
 

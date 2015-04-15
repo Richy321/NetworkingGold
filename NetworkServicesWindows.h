@@ -1,7 +1,9 @@
 #pragma once
 #include "INetworkService.h"
-#include "NetworkServices.h"
 #include "WinSocket.h"
+#include "Connection.h"
+
+class Connection;
 
 #if PLATFORM == PLATFORM_WINDOWS 
 	#include <WinSock2.h>
@@ -17,7 +19,8 @@ namespace networking
 		#pragma region Construction/Destruction
 		NetworkServicesWindows()
 		{
-			assert(Initialise());
+			bool initialised = Initialise();
+			assert(initialised);
 		}
 
 		~NetworkServicesWindows()
@@ -43,6 +46,10 @@ namespace networking
 			return new WinSocket();
 		}
 
+		IConnection* CreateConnection(const int protocolId, const float timeout)
+		{
+			return new Connection(protocolId, timeout, *this);
+		}
 	};
 }
 

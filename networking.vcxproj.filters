@@ -456,6 +456,14 @@
     <ClInclude Include="INetworkService.h">
       <Filter>networking</Filter>
     </ClInclude>
+    <ClInclude Include="ServerApp.h" />
+    <ClInclude Include="SharedNetworkConfiguration.h" />
+    <ClInclude Include="Connection.h">
+      <Filter>networking</Filter>
+    </ClInclude>
+    <ClInclude Include="IConnection.h">
+      <Filter>networking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl">
