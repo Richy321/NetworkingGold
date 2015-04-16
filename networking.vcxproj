@@ -295,6 +295,9 @@
     <ClInclude Include="networkingApp.h" />
     <ClInclude Include="NetworkServicesUnix.h" />
     <ClInclude Include="NetworkServicesWindows.h" />
+    <ClInclude Include="PacketQueue.h" />
+    <ClInclude Include="ReliabilitySystem.h" />
+    <ClInclude Include="ReliableConnection.h" />
     <ClInclude Include="ServerApp.h" />
     <ClInclude Include="SharedNetworkConfiguration.h" />
     <ClInclude Include="WinSocket.h" />

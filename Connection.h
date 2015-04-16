@@ -8,8 +8,6 @@ using namespace networking;
 class Connection : public IConnection
 {
 public:
-
-	static const int HeaderSize = 4;
 	INetworkService& networkService;
 
 	Connection(unsigned int protocolId, float timeout, INetworkService& networkServ) : IConnection(protocolId, timeout), networkService(networkServ)
@@ -22,7 +20,7 @@ public:
 		ClearData();
 	}
 
-	~Connection() 
+	virtual ~Connection() 
 	{
 		if (running)
 			Stop();
@@ -35,13 +33,17 @@ public:
 		if (!socket->Open(port))
 			return false;
 		running = true;
+		OnStart();
 		return true;
 	}
 
 	void Listen() override
 	{
 		printf("server listening for connection\n");
+		bool connected = IsConnected();
 		ClearData();
+		if (connected)
+			OnDisconnect();
 		mode = Server;
 		state = Listening;
 	}
@@ -50,16 +52,23 @@ public:
 	{
 		assert(running);
 		printf("stop connection\n");
+		bool connected = IsConnected();
 		ClearData();
 		socket->Close();
 		running = false;
+		if (connected)
+			OnDisconnect();
+		OnStop();
 	}
 
 	void Connect(const Address address) override
 	{
 		printf("client connecting to %d.%d.%d.%d:%d\n",
 			address.GetA(), address.GetB(), address.GetC(), address.GetD(), address.GetPort());
+		bool connected = IsConnected();
 		ClearData();
+		if (connected)
+			OnDisconnect();
 		mode = Client;
 		state = Connecting;
 		this->address = address;
@@ -70,9 +79,10 @@ public:
 	bool ConnectFailed() const override { return state == ConnectFail; }
 	bool IsConnected() const override { return state == Connected; }
 	bool IsListening() const override { return state == Listening; }
+	bool IsRunning() const { return running; }
 	Mode GetMode() const override { return mode; }
 
-	void Update(float deltaTime) override
+	virtual void Update(float deltaTime) override
 	{
 		assert(running);
 		timeoutAccumulator += deltaTime;
@@ -83,6 +93,7 @@ public:
 				printf("connect timed out\n");
 				ClearData();
 				state = ConnectFail;
+				OnDisconnect();
 			}
 			else if (state == Connected)
 			{
@@ -90,11 +101,12 @@ public:
 				ClearData();
 				if (state == Connecting)
 					state = ConnectFail;
+				OnDisconnect();
 			}
 		}
 	}
 
-	bool SendPacket(const unsigned char data[], const int size) override
+	virtual bool SendPacket(const unsigned char data[], const int size) override
 	{
 		assert(running);
 		if (address.GetAddress() == 0)
@@ -110,7 +122,7 @@ public:
 		return socket->Send(address, packet, size + HeaderSize);
 	}
 
-	int ReceivePacket(unsigned char data[], int size) override
+	virtual int ReceivePacket(unsigned char data[], int size) override
 	{
 		assert(running);
 		unsigned char* packet;
@@ -135,6 +147,7 @@ public:
 				sender.GetA(), sender.GetB(), sender.GetC(), sender.GetD(), sender.GetPort());
 			state = Connected;
 			address = sender;
+			OnConnect();
 		}
 		if (sender == address)
 		{
@@ -142,6 +155,7 @@ public:
 			{
 				printf("client completes connection with server\n");
 				state = Connected;
+				OnConnect();
 			}
 			timeoutAccumulator = 0.0f;
 			memcpy(data, &packet[HeaderSize], size - HeaderSize);
@@ -149,7 +163,20 @@ public:
 		}
 		return 0;
 	}
+
+	int GetHeaderSize() const
+	{
+		return HeaderSize;
+	}
+
 protected:
+
+	//basic inherited event system functions
+	virtual void OnStart()		{}
+	virtual void OnStop()		{}
+	virtual void OnConnect()    {}
+	virtual void OnDisconnect() {}
+
 	void ClearData()
 	{
 		state = Disconnected;
@@ -168,6 +195,8 @@ private:
 
 	unsigned int protocolId;
 	float timeout;
+
+	static const int HeaderSize = 4;
 
 	bool running;
 	Mode mode;

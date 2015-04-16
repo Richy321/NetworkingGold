@@ -1,7 +1,7 @@
 #pragma once
 #include "ISocket.h"
 #include "IConnection.h"
-
+#include "ReliableConnection.h"
 class Connection;
 
 namespace networking
@@ -16,6 +16,7 @@ namespace networking
 		};
 		virtual ISocket* CreateSocket(SocketType sockType = INetworkService::SocketType::UDP) = 0;
 		virtual IConnection* CreateConnection(const int protocolId, const float timeout) = 0;
+		virtual ReliableConnection* CreateReliableConnection(const int protocolId, const float timeout) = 0;
 	};
 }
 

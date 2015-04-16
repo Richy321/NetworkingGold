@@ -464,6 +464,11 @@
     <ClInclude Include="IConnection.h">
       <Filter>networking</Filter>
     </ClInclude>
+    <ClInclude Include="PacketQueue.h">
+      <Filter>networking</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliabilitySystem.h" />
+    <ClInclude Include="ReliableConnection.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl">

@@ -50,6 +50,12 @@ namespace networking
 		{
 			return new Connection(protocolId, timeout, *this);
 		}
+
+		ReliableConnection* CreateReliableConnection(const int protocolId, const float timeout)
+		{
+			return new ReliableConnection(protocolId, timeout, *this);
+		}
+
 	};
 }
 
