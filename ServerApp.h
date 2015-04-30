@@ -3,6 +3,7 @@
 #include "../../octet.h"
 #include "NetworkServices.h"
 #include "SharedNetworkConfiguration.h"
+#include "FlowControl.h"
 #include <chrono>
 
 using namespace std::chrono;
@@ -16,6 +17,7 @@ namespace octet
 		IConnection* connection;
 		time_point<high_resolution_clock> startTime;
 		time_point<high_resolution_clock> lastTime;
+		FlowControl flowControl;
 
 		ServerApp(int argc, char **argv) : app(argc, argv)
 		{
@@ -25,8 +27,11 @@ namespace octet
 		{
 			startTime = high_resolution_clock::now();
 			lastTime = startTime;
+			if(isUseReliableConnection)
+				connection = NetworkServices::GetInstance().CreateReliableConnection(ProtocolId, TimeOut);
+			else
+				connection = NetworkServices::GetInstance().CreateConnection(ProtocolId, TimeOut);
 
-			connection = NetworkServices::GetInstance().CreateConnection(ProtocolId, TimeOut);
 			if (!connection->Start(ServerPort))
 			{
 				printf("could not start connection on port %d\n", ServerPort);
@@ -56,8 +61,13 @@ namespace octet
 		{
 			if (connection->IsConnected())
 			{
+				if(isUseReliableConnection)
+					flowControl.Update(deltaTime, ((ReliableConnection*)connection)->GetReliabilitySystem().GetRoundTripTime() * 1000.0f);
+
 				unsigned char packet[] = "server to client";
+				
 				connection->SendPacket(packet, sizeof(packet));
+
 			}
 
 			//receive until theres no more packets left

@@ -46,16 +46,15 @@ namespace networking
 			return new WinSocket();
 		}
 
-		IConnection* CreateConnection(const int protocolId, const float timeout)
+		Connection* CreateConnection(const int protocolId, const float timeout)
 		{
-			return new Connection(protocolId, timeout, *this);
+			return new Connection(protocolId, timeout, CreateSocket(SocketType::UDP));
 		}
 
 		ReliableConnection* CreateReliableConnection(const int protocolId, const float timeout)
 		{
-			return new ReliableConnection(protocolId, timeout, *this);
+			return new ReliableConnection(protocolId, timeout, CreateSocket(SocketType::UDP));
 		}
-
 	};
 }
 

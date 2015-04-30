@@ -12,7 +12,7 @@ namespace networking
 	{
 	public:
 
-		int socketHandle;
+		SOCKET socketHandle;
 
 		WinSocket()
 		{
@@ -27,6 +27,7 @@ namespace networking
 		{
 			//create socket
 			assert(!IsOpen());
+
 			socketHandle = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 			if (socketHandle <= 0)
 			{

@@ -288,6 +288,7 @@
     <ClInclude Include="..\..\shaders\texture_shader.h" />
     <ClInclude Include="Address.h" />
     <ClInclude Include="Connection.h" />
+    <ClInclude Include="FlowControl.h" />
     <ClInclude Include="IConnection.h" />
     <ClInclude Include="INetworkService.h" />
     <ClInclude Include="NetworkServices.h" />

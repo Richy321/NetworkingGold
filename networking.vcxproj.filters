@@ -467,8 +467,15 @@
     <ClInclude Include="PacketQueue.h">
       <Filter>networking</Filter>
     </ClInclude>
-    <ClInclude Include="ReliabilitySystem.h" />
-    <ClInclude Include="ReliableConnection.h" />
+    <ClInclude Include="FlowControl.h">
+      <Filter>networking</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliableConnection.h">
+      <Filter>networking</Filter>
+    </ClInclude>
+    <ClInclude Include="ReliabilitySystem.h">
+      <Filter>networking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\resources\mesh_builder.inl">

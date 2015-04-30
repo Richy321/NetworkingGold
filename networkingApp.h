@@ -2,6 +2,7 @@
 #include "ISocket.h"
 #include "Address.h"
 #include "SharedNetworkConfiguration.h"
+#include "FlowControl.h"
 
 #include <chrono>
 
@@ -19,6 +20,8 @@ namespace octet
 		bool connected = false;
 		time_point<high_resolution_clock> startTime;
 		time_point<high_resolution_clock> lastTime;
+
+		FlowControl flowControl;
 
 	public:
 		/// this is called when we construct the class before everything is initialised.
@@ -46,7 +49,10 @@ namespace octet
 
 		void InitialiseConnectionToServer()
 		{
-			serverConnection = NetworkServices::GetInstance().CreateConnection(ProtocolId, TimeOut);
+			if(isUseReliableConnection)
+				serverConnection = NetworkServices::GetInstance().CreateReliableConnection(ProtocolId, TimeOut);
+			else
+				serverConnection = NetworkServices::GetInstance().CreateConnection(ProtocolId, TimeOut);
 
 			if (!serverConnection->Start(ClientPort))
 			{
@@ -103,6 +109,14 @@ namespace octet
 			{
 				printf("connection failed\n");
 			}
+
+			if (serverConnection->IsConnected())
+			{
+				if (isUseReliableConnection)
+					flowControl.Update(deltaTime, ((ReliableConnection*)serverConnection)->GetReliabilitySystem().GetRoundTripTime() * 1000.0f);
+			}
+
+			const float sendRate = flowControl.GetSendRate();
 
 			unsigned char packet[] = "client to server";
 			serverConnection->SendPacket(packet, sizeof(packet));
